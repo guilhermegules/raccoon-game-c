@@ -10,3 +10,6 @@ Raccoon game developed with C language
 - `make start-hello-world` for start hello world project;
 - `make build-key-clicker` for build key clicker project with gcc compiler;
 - `make start-key-clicker` for start key clicker project.
+
+## Test contributing
+- [x] some test
