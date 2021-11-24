@@ -7,3 +7,12 @@
 	<SFML/Window.h>
 	<SFML/System/Clock.h>
 
+1637712859 source:/home/guilhermegules/workspaces/dev/raccoon-game-c/raccoon/main.c
+	<stdlib.h>
+	<SFML/Audio.h>
+	<SFML/Graphics.h>
+	<SFML/Graphics/Export.h>
+	<SFML/Window.h>
+	<SFML/System/Clock.h>
+	<stdbool.h>
+

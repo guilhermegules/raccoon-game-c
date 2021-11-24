@@ -15,9 +15,9 @@
 					<Add option="-g" />
 				</Compiler>
 				<Linker>
-					<Add library="sfml-graphics" />
-					<Add library="sfml-window" />
-					<Add library="sfml-system" />
+					<Add library="csfml-graphics" />
+					<Add library="csfml-window" />
+					<Add library="csfml-system" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -39,8 +39,12 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="cb.bmp" />
-		<Unit filename="main.cpp" />
+		<Unit filename="cb.bmp">
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="main.cpp">
+			<Option target="Release" />
+		</Unit>
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
