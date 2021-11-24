@@ -6,15 +6,15 @@
 #include <SFML/System/Clock.h>
 #include <stdbool.h>
 
-#define RACCOON_WIDTH 320
-#define RACCOON_HEIGHT 232
+#define RACCOON_WIDTH 117
+#define RACCOON_HEIGHT 85
 
 sfIntRect figures[5][5] =
 {
-    {320,  0, RACCOON_WIDTH, RACCOON_HEIGHT},
-    {640,  0, RACCOON_WIDTH, RACCOON_HEIGHT},
-    {960,  0, RACCOON_WIDTH, RACCOON_HEIGHT},
-    {1280, 0, RACCOON_WIDTH, RACCOON_HEIGHT}
+    {117,  0, RACCOON_WIDTH, RACCOON_HEIGHT},
+    {234,  0, RACCOON_WIDTH, RACCOON_HEIGHT},
+    {353,  0, RACCOON_WIDTH, RACCOON_HEIGHT},
+    {470,  0, RACCOON_WIDTH, RACCOON_HEIGHT}
 };
 
 sfSprite* createSprite(sfIntRect spriteFrame, char* imagePath)
@@ -24,7 +24,6 @@ sfSprite* createSprite(sfIntRect spriteFrame, char* imagePath)
 
     sfSprite_setTexture(draw, texture, 0);
     sfSprite_setTextureRect(draw, spriteFrame);
-
     return draw;
 }
 
@@ -52,14 +51,8 @@ int main()
             }
         }
 
-        sfTime tempo = sfClock_getElapsedTime(relogio);
 
-        if(tempo.microseconds >= 150000)
-        {
-            frameIdx++;
-            if(frameIdx >= 4) frameIdx=0;
-            sfClock_restart(relogio);
-        }
+        sfTime tempo = sfClock_getElapsedTime(relogio);
 
         if(sfKeyboard_isKeyPressed(sfKeyRight))
         {
@@ -78,14 +71,27 @@ int main()
 
         if(sfKeyboard_isKeyPressed(sfKeyDown))
         {
+
             posY += 1.0;
         }
 
 
-        spriteFrame = figures[frameIdx][0];
-        raccoon = createSprite(spriteFrame, "assets/texugo.jpeg");
+        if(tempo.microseconds >= 150000)
+        {
+            frameIdx++;
+            if(frameIdx >= 4) frameIdx=0;
+            sfClock_restart(relogio);
+        }
 
-        sfRenderWindow_clear(window, sfBlack);
+        spriteFrame = figures[frameIdx][0];
+        raccoon = createSprite(spriteFrame, "assets/texugo.png");
+
+        sfVector2f fator;
+        fator.x = 5;
+        fator.y = 5;
+        sfSprite_scale(raccoon, fator);
+
+        sfRenderWindow_clear(window, sfWhite);
 
         sfSprite_setPosition(raccoon, (sfVector2f)
         {
@@ -93,6 +99,10 @@ int main()
         });
 
         sfRenderWindow_drawSprite(window, raccoon, NULL);
+
+       // sfVector2f pos = sfSprite_getPosition(raccoon);
+       // printf(" X: %f  |   Y: %F", pos.x, pos.y);
+
         sfRenderWindow_display(window);
     }
 }
