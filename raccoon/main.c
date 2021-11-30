@@ -11,12 +11,27 @@
 #define RACCOON_HEIGHT 85
 #define RACCON_SPRITES 4
 
-sfIntRect figures[RACCON_SPRITES] =
+#define DOG_HEIGHT 23.8
+#define DOG_WIDTH 82.3
+#define DOG_SPRITES 5
+
+#define LIVES 3
+
+sfIntRect racconSprites[RACCON_SPRITES] =
 {
     {117,  0, RACCOON_WIDTH, RACCOON_HEIGHT},
     {234,  0, RACCOON_WIDTH, RACCOON_HEIGHT},
     {353,  0, RACCOON_WIDTH, RACCOON_HEIGHT},
     {470,  0, RACCOON_WIDTH, RACCOON_HEIGHT}
+};
+
+sfIntRect dogSprites[DOG_SPRITES] =
+{
+    {82.3,  0, DOG_WIDTH, DOG_HEIGHT},
+    {164.6,  0, DOG_WIDTH, DOG_HEIGHT},
+    {246.9,  0, DOG_WIDTH, DOG_HEIGHT},
+    {329.2,  0, DOG_WIDTH, DOG_HEIGHT},
+    {411.5,  0, DOG_WIDTH, DOG_HEIGHT}
 };
 
 sfSprite* createSprite(sfIntRect spriteFrame, char* imagePath)
@@ -30,25 +45,53 @@ sfSprite* createSprite(sfIntRect spriteFrame, char* imagePath)
     return draw;
 }
 
-
 int main()
 {
-    sfClock *relogio = sfClock_create();
+    sfClock *clock = sfClock_create();
     sfRenderWindow *window;
     sfVideoMode videoMode = {800, 600, 32};
     window = sfRenderWindow_create(videoMode, "Raccoon Game", sfResize | sfClose, NULL);
-    int frameIdx=0;
+    int frameIdx = 0;
     float posX = 0.0f, posY = 0.0f;
 
     // Sprites
     sfSprite *raccoon;
+    sfVector2f raccoonPos;
+
+    // sfSprite *dog;
+
+    //sfTexture *liveTexture = sfTexture_createFromFile("assets/heart.png", NULL);
+
+    //sfSprite *live = sfSprite_create();
+
+    //sfSprite_setTexture(live, liveTexture, 0);
+
+    //sfIntRect liveFrame;
+    //liveFrame.height = 323;
+    //liveFrame.width = 378;
+    //liveFrame.top = 0;
+    //liveFrame.left = 0;
+
+    //sfSprite_scale(live, (sfVector2f)
+    //{
+    //    0.15f, 0.15f
+    //});
+
+    //sfSprite_setTextureRect(live, liveFrame);
+
+    //sfSprite_setPosition(live, (sfVector2f)
+    //{
+    //    5.00f, 5.00f
+    //});
 
     while(sfRenderWindow_isOpen(window))
     {
         sfEvent event;
-        sfIntRect spriteFrame = {};
 
-        sfVector2f raccoonPos = sfSprite_getPosition(raccoon);
+        if(raccoon != NULL)
+        {
+            raccoonPos = sfSprite_getPosition(raccoon);
+        }
 
         while(sfRenderWindow_pollEvent(window, &event))
         {
@@ -58,48 +101,52 @@ int main()
             }
         }
 
-
-        sfTime tempo = sfClock_getElapsedTime(relogio);
+        sfTime time = sfClock_getElapsedTime(clock);
 
         if(sfKeyboard_isKeyPressed(sfKeyRight))
         {
-            posX += 1.0;
+            if(raccoonPos.x < 690)
+            {
+                posX += 1.0;
+            }
         }
 
         if(sfKeyboard_isKeyPressed(sfKeyLeft))
         {
-            if(raccoonPos.x != -80)
+            if(raccoonPos.x != -15)
             {
                 posX -= 1.0;
             }
-
         }
 
         if(sfKeyboard_isKeyPressed(sfKeyUp))
         {
-            posY -= 1.0;
+            if(raccoonPos.y > -20)
+            {
+                posY -= 1.0;
+            }
         }
 
         if(sfKeyboard_isKeyPressed(sfKeyDown))
         {
-
-            posY += 1.0;
+            if(raccoonPos.y < 530)
+            {
+                posY += 1.0;
+            }
         }
 
-        if(tempo.microseconds >= 150000)
+        if(time.microseconds >= 150000)
         {
             frameIdx++;
-            if(frameIdx >= 4) frameIdx=0;
-            sfClock_restart(relogio);
+
+            if(frameIdx >= 3) frameIdx = 0;
+
+            sfClock_restart(clock);
         }
 
-        spriteFrame = figures[frameIdx];
-        raccoon = createSprite(spriteFrame, "assets/texugo.png");
+        raccoon = createSprite(racconSprites[frameIdx], "assets/texugo.png");
 
-        sfVector2f fator;
-        fator.x = 5;
-        fator.y = 5;
-        sfSprite_scale(raccoon, fator);
+        // dog = createSprite(dogSprites[frameIdx], "assets/dog.png");
 
         sfRenderWindow_clear(window, sfWhite);
 
@@ -110,8 +157,15 @@ int main()
 
         sfRenderWindow_drawSprite(window, raccoon, NULL);
 
+        //sfRenderWindow_drawSprite(window, dog, NULL);
+
+        //sfRenderWindow_drawSprite(window, live, NULL);
+
         sfRenderWindow_display(window);
     }
-    //sfSprite_destroy(raccoon);
-    //sfRenderWindow_destroy(window);
+
+    sfSprite_destroy(raccoon);
+    //sfSprite_destroy(live);
+    //sfSprite_destroy(dog);
+    sfRenderWindow_destroy(window);
 }
