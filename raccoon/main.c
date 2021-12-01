@@ -45,6 +45,20 @@ sfSprite* createSprite(sfIntRect spriteFrame, char* imagePath)
     return draw;
 }
 
+sfSprite* gameOver()
+{
+            sfIntRect GameOverFrame;
+            GameOverFrame.height = 629;
+            GameOverFrame.width = 579;
+            sfTexture *texture = sfTexture_createFromFile("assets/gameOver.png", NULL);
+            sfSprite *draw = sfSprite_create();
+
+            sfSprite_setTexture(draw, texture, 0);
+            sfSprite_setTextureRect(draw, GameOverFrame);
+
+            return draw;
+}
+
 int main()
 {
     sfClock *clock = sfClock_create();
@@ -118,7 +132,7 @@ int main()
        500.0f, 0.9f
     });
     // ====================================================== END EMPTY HEART ======================================================
-
+    int bateu = 0;
     while(sfRenderWindow_isOpen(window))
     {
         sfEvent event;
@@ -137,7 +151,19 @@ int main()
         {
             if(raccoonPos.x < 690)
             {
-                posX += 3.0;
+                posX += 8.0;
+            }
+            else
+            {
+                bateu++;
+                if(bateu==1) sfSprite_destroy(live);
+                if(bateu==2) sfSprite_destroy(live_2);
+                if(bateu==3) {
+                    sfSprite_destroy(live_3);
+                    sfSprite *game_over= gameOver();
+                    sfRenderWindow_drawSprite(window, game_over, NULL);
+                }
+                posX = 0.0;
             }
         }
 
@@ -195,7 +221,6 @@ int main()
         sfRenderWindow_drawSprite(window, live, NULL);
         sfRenderWindow_drawSprite(window, live_2, NULL);
         sfRenderWindow_drawSprite(window, live_3, NULL);
-        sfRenderWindow_drawSprite(window, liveEmpty, NULL);
 
         if(raccoon != NULL)
         {
