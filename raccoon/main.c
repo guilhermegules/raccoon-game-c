@@ -1,5 +1,6 @@
 #include <stdlib.h>
-#include<stdio.h>
+#include <stdio.h>
+#include <time.h>
 #include <SFML/Audio.h>
 #include <SFML/Graphics.h>
 #include <SFML/Graphics/Export.h>
@@ -13,7 +14,7 @@
 
 #define DOG_HEIGHT 122
 #define DOG_WIDTH 161.2
-#define DOG_SPRITES 5
+#define DOG_SPRITES 10
 
 #define LIVES 3
 
@@ -27,11 +28,16 @@ sfIntRect racconSprites[RACCON_SPRITES] =
 
 sfIntRect dogSprites[DOG_SPRITES] =
 {
-    {161.2,  0, DOG_WIDTH, DOG_HEIGHT},
-    {322.4,  0, DOG_WIDTH, DOG_HEIGHT},
-    {483.6,  0, DOG_WIDTH, DOG_HEIGHT},
-    {644.8,  0, DOG_WIDTH, DOG_HEIGHT},
-    {806  ,  0, DOG_WIDTH, DOG_HEIGHT}
+    {806, 0, DOG_WIDTH, DOG_HEIGHT},
+    {644.8, 0, DOG_WIDTH, DOG_HEIGHT},
+    {483.6, 0, DOG_WIDTH, DOG_HEIGHT},
+    {322.4, 0, DOG_WIDTH, DOG_HEIGHT},
+    {161.2, 0, DOG_WIDTH, DOG_HEIGHT},
+    {806, 122, DOG_WIDTH, DOG_HEIGHT},
+    {644.8, 122, DOG_WIDTH, DOG_HEIGHT},
+    {483.6, 122, DOG_WIDTH, DOG_HEIGHT},
+    {322.4, 122, DOG_WIDTH, DOG_HEIGHT},
+    {161.2, 122, DOG_WIDTH, DOG_HEIGHT},
 };
 
 sfSprite* createSprite(sfIntRect spriteFrame, char* imagePath)
@@ -47,27 +53,35 @@ sfSprite* createSprite(sfIntRect spriteFrame, char* imagePath)
 
 sfSprite* gameOver()
 {
-            sfIntRect GameOverFrame;
-            GameOverFrame.height = 629;
-            GameOverFrame.width = 579;
-            sfTexture *texture = sfTexture_createFromFile("assets/gameOver.png", NULL);
-            sfSprite *draw = sfSprite_create();
+    sfIntRect GameOverFrame;
+    GameOverFrame.height = 629;
+    GameOverFrame.width = 579;
+    sfTexture *texture = sfTexture_createFromFile("assets/gameOver.png", NULL);
+    sfSprite *draw = sfSprite_create();
 
-            sfSprite_setTexture(draw, texture, 0);
-            sfSprite_setTextureRect(draw, GameOverFrame);
+    sfSprite_setTexture(draw, texture, 0);
+    sfSprite_setTextureRect(draw, GameOverFrame);
 
-            return draw;
+    return draw;
+}
+
+float generateRandomDogPosition() {
+    int lowerNumber = 100, biggerNumber = 800;
+
+    return (rand() % (biggerNumber - lowerNumber + 1)) + lowerNumber;
 }
 
 int main()
 {
+    srand(time(NULL));
     sfClock *clock = sfClock_create();
     sfRenderWindow *window;
     sfVideoMode videoMode = {800, 600, 32};
     window = sfRenderWindow_create(videoMode, "Raccoon Game", sfResize | sfClose, NULL);
     int frameIdx = 0;
+    int dogFrameIndex = 0;
     float posX = 0.0f, posY = 0.0f;
-    float dposX = 0.0f, dposY = 0.0f;
+    float dposX = 830.0f, dposY = 300.0f;
 
     // Sprites
     sfSprite *raccoon;
@@ -129,7 +143,7 @@ int main()
 
     sfSprite_setPosition(liveEmpty, (sfVector2f)
     {
-       500.0f, 0.9f
+        500.0f, 0.9f
     });
     // ====================================================== END EMPTY HEART ======================================================
     int bateu = 0;
@@ -158,7 +172,8 @@ int main()
                 bateu++;
                 if(bateu==1) sfSprite_destroy(live);
                 if(bateu==2) sfSprite_destroy(live_2);
-                if(bateu==3) {
+                if(bateu==3)
+                {
                     sfSprite_destroy(live_3);
                     sfSprite *game_over= gameOver();
                     sfRenderWindow_drawSprite(window, game_over, NULL);
@@ -169,7 +184,7 @@ int main()
 
         if(sfKeyboard_isKeyPressed(sfKeyLeft))
         {
-           if(raccoonPos.x != -15)
+            if(raccoonPos.x != -15)
             {
                 posX -= 3.0;
             }
@@ -177,7 +192,7 @@ int main()
 
         if(sfKeyboard_isKeyPressed(sfKeyUp))
         {
-           if(raccoonPos.y > -20)
+            if(raccoonPos.y > -20)
             {
                 posY -= 3.0;
             }
@@ -194,16 +209,27 @@ int main()
         if(time.microseconds >= 150000)
         {
             frameIdx++;
+            dogFrameIndex++;
 
             if(frameIdx >= 3) frameIdx = 0;
+
+            if(dogFrameIndex >= DOG_SPRITES) dogFrameIndex = 0;
+
+            dposX -= 8.0;
 
             sfClock_restart(clock);
         }
 
         raccoon = createSprite(racconSprites[frameIdx], "assets/texugo.png");
-        dog     = createSprite(   dogSprites[frameIdx], "assets/dog.png"   );
+        dog     = createSprite(   dogSprites[dogFrameIndex], "assets/dog.png"   );
 
         sfRenderWindow_clear(window, sfWhite);
+
+        if(dogPos.x < -200)
+        {
+            dposY = generateRandomDogPosition();
+            dposX = 830.0f;
+        }
 
         sfSprite_setPosition(raccoon, (sfVector2f)
         {
@@ -214,7 +240,6 @@ int main()
         {
             dposX, dposY
         });
-
 
         sfRenderWindow_drawSprite(window, dog, NULL);
         sfRenderWindow_drawSprite(window, raccoon, NULL);
