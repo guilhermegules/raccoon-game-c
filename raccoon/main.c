@@ -9,37 +9,42 @@
 #include <SFML/System/Clock.h>
 #include <stdbool.h>
 
-#define RACCOON_WIDTH 117
-#define RACCOON_HEIGHT 85
-#define RACCON_SPRITES 4
+#define RACCOON_WIDTH 48
+#define RACCOON_HEIGHT 48
+#define RACCON_SPRITES 3
 
-#define DOG_HEIGHT 122
-#define DOG_WIDTH 161.2
-#define DOG_SPRITES 10
+#define DOG_HEIGHT 48
+#define DOG_WIDTH 48
+#define DOG_SPRITES 3
+
+#define PANDA_HEIGHT 48
+#define PANDA_WIDTH 48
+#define PANDA_SPRITES 3
 
 #define LIVES 3
 
 sfIntRect racconSprites[RACCON_SPRITES] =
 {
-    {117,  0, RACCOON_WIDTH, RACCOON_HEIGHT},
-    {234,  0, RACCOON_WIDTH, RACCOON_HEIGHT},
-    {353,  0, RACCOON_WIDTH, RACCOON_HEIGHT},
-    {470,  0, RACCOON_WIDTH, RACCOON_HEIGHT}
+    {48,  96, RACCOON_WIDTH, RACCOON_HEIGHT},
+    {96,  96, RACCOON_WIDTH, RACCOON_HEIGHT},
+    {144,  96, RACCOON_WIDTH, RACCOON_HEIGHT},
 };
 
 sfIntRect dogSprites[DOG_SPRITES] =
 {
-    {806,   0, DOG_WIDTH, DOG_HEIGHT},
-    {644.8, 0, DOG_WIDTH, DOG_HEIGHT},
-    {483.6, 0, DOG_WIDTH, DOG_HEIGHT},
-    {322.4, 0, DOG_WIDTH, DOG_HEIGHT},
-    {161.2, 0, DOG_WIDTH, DOG_HEIGHT},
-    {806, 122, DOG_WIDTH, DOG_HEIGHT},
-    {644.8, 122, DOG_WIDTH, DOG_HEIGHT},
-    {483.6, 122, DOG_WIDTH, DOG_HEIGHT},
-    {322.4, 122, DOG_WIDTH, DOG_HEIGHT},
-    {161.2, 122, DOG_WIDTH, DOG_HEIGHT},
+    {48, 48, DOG_WIDTH, DOG_HEIGHT},
+    {96, 48, DOG_WIDTH, DOG_HEIGHT},
+    {144, 48, DOG_WIDTH, DOG_HEIGHT},
 };
+
+sfIntRect pandasSprites[PANDA_SPRITES] =
+{
+    {432, 240, PANDA_WIDTH, PANDA_HEIGHT},
+    {480, 240, PANDA_WIDTH, PANDA_HEIGHT},
+    {528, 240, PANDA_WIDTH, PANDA_HEIGHT},
+};
+
+// sfIntRect
 
 sfSprite* createSprite(sfIntRect spriteFrame, char* imagePath)
 {
@@ -79,21 +84,31 @@ bool verificaColisao(sfSprite * first, sfSprite * second, float FIRST_WIDTH, flo
 
     float firstX                      = position_first.x;
     float firstY                      = position_first.y;
+    float rightFirstSide              = firstX + FIRST_WIDTH;
+    float leftFirstSide               = firstX;
+    float bottomFirstSide             = firstY + FIRST_HEIGHT;
+    float topFirstSide                = firstY;
 
-    sfVector2f position_second        = sfSprite_getPosition(second);
+    sfVector2f position_second        = sfSprite_getPosition(  second  );
 
     float secondX                     = position_second.x;
     float secondY                     = position_second.y;
+    float rightSecondSide             = secondX + SECOND_WIDTH;
+    float leftSecondSide              = secondX;
+    float bottomSecondSide            = secondY + SECOND_HEIGHT;
+    float topSecondSide               = secondY;
 
-    if (
-        firstX < secondX + SECOND_WIDTH &&
-        firstX + FIRST_WIDTH > secondX &&
-        firstY < secondY + SECOND_WIDTH &&
-        FIRST_HEIGHT + firstY > secondY
-    )
-    {
-        return true;
-    }
+    bool rightColision                = false;
+    bool leftColision                 = false;
+    bool topColision                  = false;
+    bool bottomColision               = false;
+
+    if ( rightFirstSide   >= leftSecondSide    ) rightColision  = true;
+    if ( topFirstSide     <= bottomSecondSide  ) bottomColision = true;
+    if ( bottomFirstSide  >= topSecondSide     ) topColision    = true;
+    if ( leftFirstSide    <= rightSecondSide   ) leftColision   = true;
+
+    if ( rightColision && bottomColision && topColision && leftColision ) return true;
 
     return false;
 }
@@ -109,6 +124,7 @@ int main()
     int dogFrameIndex = 0;
     float posX = 0.0f, posY = 0.0f;
     float dposX = 830.0f, dposY = generateRandomDogPosition();
+    float pandaPosX = 100.0f, pandaPosY = 100.0f;
 
     // Sprites
     sfSprite *raccoon;
@@ -116,11 +132,14 @@ int main()
 
     sfSprite *dog;
     sfVector2f dogPos;
+
+    sfSprite *panda;
+    sfVector2f pandaPos;
+
+    // HEART
     sfVector2f liveTAM;
     liveTAM.x = 0.15;
     liveTAM.y = 0.15;
-
-    //HEART
     sfTexture *liveTexture = sfTexture_createFromFile("assets/heart.png", NULL);
     sfSprite *live = sfSprite_create();
 
@@ -225,17 +244,18 @@ int main()
             frameIdx++;
             dogFrameIndex++;
 
-            if(frameIdx >= 3) frameIdx = 0;
+            if(frameIdx >= 2) frameIdx = 0;
 
-            if(dogFrameIndex >= DOG_SPRITES) dogFrameIndex = 0;
+            if(dogFrameIndex >= 2) dogFrameIndex = 0;
 
-            dposX -= 20.0;
+            dposX -= 10.0;
 
             sfClock_restart(clock);
         }
 
-        raccoon = createSprite(racconSprites[frameIdx], "assets/texugo.png");
+        raccoon = createSprite(racconSprites[frameIdx], "assets/raccoon.png");
         dog     = createSprite(dogSprites[dogFrameIndex], "assets/dog.png");
+        panda = createSprite(pandasSprites[frameIdx], "assets/panda.png");
 
         sfRenderWindow_clear(window, sfWhite);
 
@@ -255,8 +275,15 @@ int main()
             dposX, dposY
         });
 
+        sfSprite_setPosition(panda, (sfVector2f)
+        {
+            pandaPosX,
+            pandaPosY
+        });
+
         sfRenderWindow_drawSprite(window, dog, NULL);
         sfRenderWindow_drawSprite(window, raccoon, NULL);
+        sfRenderWindow_drawSprite(window, panda, NULL);
         sfRenderWindow_drawSprite(window, live, NULL);
         sfRenderWindow_drawSprite(window, live_2, NULL);
         sfRenderWindow_drawSprite(window, live_3, NULL);
@@ -269,21 +296,21 @@ int main()
             {
                 sfSprite_destroy(live);
                 posX = 0.0f;
-                posY = 0.0f;
+                posY = 100.0f;
             }
 
             if( bateu == 2 )
             {
                 sfSprite_destroy(live_2);
                 posX = 0.0f;
-                posY = 0.0f;
+                posY = 100.0f;
             }
 
             if( bateu == 3 )
             {
                 sfSprite_destroy(live_3);
                 posX = 0.0f;
-                posY = 0.0f;
+                posY = 100.0f;
             }
         }
 
