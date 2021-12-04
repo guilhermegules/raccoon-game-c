@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1638575021 source:/home/vitorsaldanha/Documentos/projetos/raccoon-game-c/raccoon/main.c
+1638661924 source:/home/vitorsaldanha/Documentos/projetos/raccoon-game-c/raccoon/main.c
 	<stdlib.h>
 	<stdio.h>
 	<time.h>

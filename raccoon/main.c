@@ -115,6 +115,20 @@ bool verificaColisao(sfSprite * first, sfSprite * second, float FIRST_WIDTH, flo
 
 int main()
 {
+    int num_lives = 5;
+    char str[1] = "";
+    sfFont *font = sfFont_createFromFile("arialregular.ttf");
+    str[1]=sprintf(str, "%d", num_lives);
+    sfText * text = sfText_create();
+    sfText_setFont(text, font);
+    sfText_setCharacterSize(text, 38);
+    sfText_setFillColor(text, sfBlack);
+    sfText_setPosition(text, (sfVector2f)
+    {
+        775.0f, 0.9f
+    });
+
+
     srand(time(NULL));
     sfClock *clock = sfClock_create();
     sfRenderWindow *window;
@@ -154,45 +168,9 @@ int main()
 
     sfSprite_setPosition(live, (sfVector2f)
     {
-        720.0f, 0.9f
+        710.0f, 0.9f
     });
 
-    sfSprite *live_2 = sfSprite_copy(live);
-    sfSprite *live_3 = sfSprite_copy(live);
-    sfSprite_setPosition(live_2, (sfVector2f)
-    {
-        650.0f, 0.9f
-    });
-    sfSprite_setPosition(live_3, (sfVector2f)
-    {
-        580.0f, 0.9f
-    });
-    //END ALL HEART
-
-
-    // ====================================================== EMPTY HEART ======================================================
-    sfTexture *liveEmptyTexture = sfTexture_createFromFile("assets/emptyHeart.png", NULL);
-    sfSprite *liveEmpty = sfSprite_create();
-
-    sfSprite_setTexture(liveEmpty, liveEmptyTexture, 0);
-
-    sfIntRect liveEmptyFrame;
-    liveEmptyFrame.height = 323;
-    liveEmptyFrame.width = 508;
-
-    sfVector2f liveEmptyTAM;
-    liveEmptyTAM.x = 1.3;
-    liveEmptyTAM.y = 1.3;
-
-    sfSprite_scale(liveEmpty, liveEmptyTAM);
-    sfSprite_setTextureRect(liveEmpty, liveEmptyFrame);
-
-    sfSprite_setPosition(liveEmpty, (sfVector2f)
-    {
-        500.0f, 0.9f
-    });
-    // ====================================================== END EMPTY HEART ======================================================
-    int bateu = 0;
     while(sfRenderWindow_isOpen(window))
     {
         sfEvent event;
@@ -205,6 +183,8 @@ int main()
             }
         }
 
+
+        sfText_setString(text, str);
         sfTime time = sfClock_getElapsedTime(clock);
 
         if(sfKeyboard_isKeyPressed(sfKeyRight))
@@ -285,34 +265,21 @@ int main()
         sfRenderWindow_drawSprite(window, raccoon, NULL);
         sfRenderWindow_drawSprite(window, panda, NULL);
         sfRenderWindow_drawSprite(window, live, NULL);
-        sfRenderWindow_drawSprite(window, live_2, NULL);
-        sfRenderWindow_drawSprite(window, live_3, NULL);
 
-        if(verificaColisao(raccoon, dog, RACCOON_WIDTH, RACCOON_HEIGHT, DOG_WIDTH, DOG_HEIGHT))
-        {
-            bateu++;
-
-            if( bateu == 1 )
-            {
-                sfSprite_destroy(live);
-                posX = 0.0f;
-                posY = 100.0f;
+        /* ================================================  controle de colisões com dog x vidas ================================================ */
+        if( num_lives > 0 ) {
+            if(verificaColisao(raccoon, dog, RACCOON_WIDTH, RACCOON_HEIGHT, DOG_WIDTH, DOG_HEIGHT)) {
+                    str[1]=sprintf(str, "%d", --num_lives);
+                    posX = 0.0f; posY = 0.0f;
             }
-
-            if( bateu == 2 )
+        } else {
+            sfText_setString(text, "game over");
+            sfText_setPosition(text, (sfVector2f)
             {
-                sfSprite_destroy(live_2);
-                posX = 0.0f;
-                posY = 100.0f;
-            }
-
-            if( bateu == 3 )
-            {
-                sfSprite_destroy(live_3);
-                posX = 0.0f;
-                posY = 100.0f;
-            }
+                280.0f, 200.0f
+            });
         }
+        /* ================================================ fim controle de colisão com dog ===================================================== */
 
         if(raccoon != NULL)
         {
@@ -324,6 +291,7 @@ int main()
             dogPos = sfSprite_getPosition(dog);
         }
 
+        sfRenderWindow_drawText(window, text, NULL);
         sfRenderWindow_display(window);
     }
 
