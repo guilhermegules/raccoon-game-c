@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+
 #include <SFML/Audio.h>
 #include <SFML/Graphics.h>
 #include <SFML/Graphics/Export.h>
@@ -17,41 +18,6 @@
 #define DOG_SPRITES 10
 
 #define LIVES 3
-
-bool verificaColisao(sfSprite * first, sfSprite * second, float FIRST_WIDTH, float FIRST_HEIGHT, float SECOND_WIDTH, float SECOND_HEIGHT)
-{
-    sfVector2f position_first         = sfSprite_getPosition(first);
-
-    float firstX                      = position_first.x;
-    float firstY                      = position_first.y;
-    float rightFirstSide              = firstX + FIRST_WIDTH;
-    float leftFirstSide               = firstX;
-    float bottomFirstSide             = firstY + FIRST_HEIGHT;
-    float topFirstSide                = firstY;
-
-    sfVector2f position_second        = sfSprite_getPosition(  second  );
-
-    float secondX                     = position_second.x;
-    float secondY                     = position_second.y;
-    float rightSecondSide             = secondX + SECOND_WIDTH;
-    float leftSecondSide              = secondX;
-    float bottomSecondSide            = secondY + SECOND_HEIGHT;
-    float topSecondSide               = secondY;
-
-    bool rightColision                = false;
-    bool leftColision                 = false;
-    bool topColision                  = false;
-    bool bottomColision               = false;
-
-    if ( rightFirstSide   >= leftSecondSide    ) rightColision = true;
-    if ( topFirstSide     <= bottomSecondSide  ) topColision   = true;
-    if ( bottomFirstSide  >= topSecondSide     ) topColision   = true;
-    if ( leftFirstSide    <= rightSecondSide   ) leftColision  = true;
-
-    if ( rightColision && topColision && topColision && leftColision ) return true;
-
-    return false;
-}
 
 sfIntRect racconSprites[RACCON_SPRITES] =
 {
@@ -100,15 +66,40 @@ sfSprite* gameOver()
     return draw;
 }
 
-float generateRandomDogPosition() {
-    int lowerNumber = 100, biggerNumber = 800;
+float generateRandomDogPosition()
+{
+    int lowerNumber = 100, biggerNumber = 500;
 
     return (rand() % (biggerNumber - lowerNumber + 1)) + lowerNumber;
 }
 
+bool verificaColisao(sfSprite * first, sfSprite * second, float FIRST_WIDTH, float FIRST_HEIGHT, float SECOND_WIDTH, float SECOND_HEIGHT)
+{
+    sfVector2f position_first         = sfSprite_getPosition(first);
+
+    float firstX                      = position_first.x;
+    float firstY                      = position_first.y;
+
+    sfVector2f position_second        = sfSprite_getPosition(second);
+
+    float secondX                     = position_second.x;
+    float secondY                     = position_second.y;
+
+    if (
+        firstX < secondX + SECOND_WIDTH &&
+        firstX + FIRST_WIDTH > secondX &&
+        firstY < secondY + SECOND_WIDTH &&
+        FIRST_HEIGHT + firstY > secondY
+    )
+    {
+        return true;
+    }
+
+    return false;
+}
+
 int main()
 {
-    bool colisao = false;
     srand(time(NULL));
     sfClock *clock = sfClock_create();
     sfRenderWindow *window;
@@ -117,7 +108,7 @@ int main()
     int frameIdx = 0;
     int dogFrameIndex = 0;
     float posX = 0.0f, posY = 0.0f;
-    float dposX = 830.0f, dposY = 300.0f;
+    float dposX = 830.0f, dposY = generateRandomDogPosition();
 
     // Sprites
     sfSprite *raccoon;
@@ -209,7 +200,7 @@ int main()
         {
             if(raccoonPos.x != -15)
             {
-                posX -= 3.0;
+                posX -= 8.0;
             }
         }
 
@@ -217,7 +208,7 @@ int main()
         {
             if(raccoonPos.y > -20)
             {
-                posY -= 3.0;
+                posY -= 8.0;
             }
         }
 
@@ -225,7 +216,7 @@ int main()
         {
             if(raccoonPos.y < 530)
             {
-                posY += 3.0;
+                posY += 8.0;
             }
         }
 
@@ -238,13 +229,13 @@ int main()
 
             if(dogFrameIndex >= DOG_SPRITES) dogFrameIndex = 0;
 
-            dposX -= 8.0;
+            dposX -= 20.0;
 
             sfClock_restart(clock);
         }
 
         raccoon = createSprite(racconSprites[frameIdx], "assets/texugo.png");
-        dog     = createSprite(   dogSprites[dogFrameIndex], "assets/dog.png"   );
+        dog     = createSprite(dogSprites[dogFrameIndex], "assets/dog.png");
 
         sfRenderWindow_clear(window, sfWhite);
 
@@ -270,13 +261,30 @@ int main()
         sfRenderWindow_drawSprite(window, live_2, NULL);
         sfRenderWindow_drawSprite(window, live_3, NULL);
 
-
-        if(verificaColisao(raccoon, dog, RACCOON_WIDTH, RACCOON_HEIGHT, DOG_WIDTH, DOG_HEIGHT)) {
+        if(verificaColisao(raccoon, dog, RACCOON_WIDTH, RACCOON_HEIGHT, DOG_WIDTH, DOG_HEIGHT))
+        {
             bateu++;
 
-            if( bateu == 1 ) { sfSprite_destroy( live   ); posX = 0.0f; posY = 0.0f; }
-            if( bateu == 2 ) { sfSprite_destroy( live_2 ); posX = 0.0f; posY = 0.0f; }
-            if( bateu == 3 ) { sfSprite_destroy( live_3 ); posX = 0.0f; posY = 0.0f; }
+            if( bateu == 1 )
+            {
+                sfSprite_destroy(live);
+                posX = 0.0f;
+                posY = 0.0f;
+            }
+
+            if( bateu == 2 )
+            {
+                sfSprite_destroy(live_2);
+                posX = 0.0f;
+                posY = 0.0f;
+            }
+
+            if( bateu == 3 )
+            {
+                sfSprite_destroy(live_3);
+                posX = 0.0f;
+                posY = 0.0f;
+            }
         }
 
         if(raccoon != NULL)

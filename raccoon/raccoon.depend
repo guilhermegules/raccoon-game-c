@@ -10,9 +10,10 @@
 	<SFML/System/Clock.h>
 	<stdbool.h>
 
-1638494352 source:/home/guilhermegules/workspaces/dev/raccoon-game-c/raccoon/main.c
+1638648508 source:/home/guilhermegules/workspaces/dev/raccoon-game-c/raccoon/main.c
 	<stdlib.h>
 	<stdio.h>
+	<time.h>
 	<SFML/Audio.h>
 	<SFML/Graphics.h>
 	<SFML/Graphics/Export.h>
