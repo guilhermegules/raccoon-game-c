@@ -10,7 +10,7 @@
 	<SFML/System/Clock.h>
 	<stdbool.h>
 
-1638732733 source:/home/guilhermegules/workspaces/dev/raccoon-game-c/raccoon/main.c
+1638741000 source:/home/guilhermegules/workspaces/dev/raccoon-game-c/raccoon/main.c
 	<stdlib.h>
 	<stdio.h>
 	<time.h>
@@ -20,4 +20,7 @@
 	<SFML/Window.h>
 	<SFML/System/Clock.h>
 	<stdbool.h>
+	"constants.h"
+
+1638733015 /home/guilhermegules/workspaces/dev/raccoon-game-c/raccoon/constants.h
 
