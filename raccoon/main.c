@@ -46,11 +46,11 @@ sfIntRect pandasSprites[PANDA_SPRITES] =
     {528, 240, PANDA_WIDTH, PANDA_HEIGHT},
 };
 
-sfIntRect meteoriteSprite = {160, 160, 160, 160};
+sfIntRect meteoriteSprite = {0, 0, 160, 160};
 
-sfIntRect chocolateSprite = {512, 512, 512, 512};
+sfIntRect chocolateSprite = {0, 0, 512, 512};
 
-sfIntRect crownSprite = {800, 600, 800, 600};
+sfIntRect crownSprite = {0, 0, 800, 600};
 
 sfIntRect paperManSprites[PAPERMAN_SPRITES] =
 {
@@ -131,7 +131,7 @@ int main()
     int num_lives = 5;
     char str[1] = "";
     sfFont *font = sfFont_createFromFile("arialregular.ttf");
-    str[1]=sprintf(str, "%d", num_lives);
+    str[1] = sprintf(str, "%d", num_lives);
     sfText * text = sfText_create();
     sfText_setFont(text, font);
     sfText_setCharacterSize(text, 38);
@@ -155,9 +155,9 @@ int main()
     float dogPosX = 830.0f, dogPosY = generateRandomDogPosition();
     float pandaPosX = 100.0f, pandaPosY = 100.0f;
     float paperManPosX = 150.0f, paperManPosY = 150.0f;
-    float chocolatePosX = 200.0f, chocolatePosY = 200.0f;
+    float chocolatePosX = 400.0f, chocolatePosY = 400.0f;
     float crownPosX = 250.0f, crownPosY = 250.0f;
-    float meteorPosX = 300.0f, meteorPosY = 300.0f;
+    float meteorPosX = 350.0f, meteorPosY = 350.0f;
 
     // Sprites
     sfSprite *raccoon;
@@ -272,6 +272,12 @@ int main()
         crown = createSprite(crownSprite, "assets/crown.png");
         meteor = createSprite(meteoriteSprite, "assets/meteor.png");
 
+        sfSprite_scale(chocolate, (sfVector2f){0.1f, 0.1f});
+
+        sfSprite_scale(crown, (sfVector2f){0.30f, 0.30f});
+
+        sfSprite_scale(meteor, (sfVector2f){0.30f, 0.30f});
+
         sfRenderWindow_clear(window, sfWhite);
 
         if(dogPos.x < -200)
@@ -320,17 +326,17 @@ int main()
             meteorPosY
         });
 
+        sfRenderWindow_drawSprite(window, chocolate, NULL);
+        sfRenderWindow_drawSprite(window, meteor, NULL);
+        sfRenderWindow_drawSprite(window, crown, NULL);
+        sfRenderWindow_drawSprite(window, paperMan, NULL);
         sfRenderWindow_drawSprite(window, dog, NULL);
         sfRenderWindow_drawSprite(window, raccoon, NULL);
         sfRenderWindow_drawSprite(window, panda, NULL);
-        sfRenderWindow_drawSprite(window, paperMan, NULL);
-        sfRenderWindow_drawSprite(window, chocolate, NULL);
-        sfRenderWindow_drawSprite(window, crown, NULL);
-        sfRenderWindow_drawSprite(window, meteor, NULL);
         sfRenderWindow_drawSprite(window, live, NULL);
 
         /* ================================================  controle de colisões com dog x vidas ================================================ */
-        if( num_lives > 0 )
+        if(num_lives > 0)
         {
             if(verificaColisao(raccoon, dog, RACCOON_WIDTH, RACCOON_HEIGHT, DOG_WIDTH, DOG_HEIGHT))
             {
@@ -357,7 +363,7 @@ int main()
             raccoonPos = sfSprite_getPosition(raccoon);
         }
 
-        if(dog!= NULL)
+        if(dog != NULL)
         {
             dogPos = sfSprite_getPosition(dog);
         }
@@ -369,5 +375,10 @@ int main()
     sfSprite_destroy(raccoon);
     sfSprite_destroy(live);
     sfSprite_destroy(dog);
+    sfSprite_destroy(meteor);
+    sfSprite_destroy(panda);
+    sfSprite_destroy(crown);
+    sfSprite_destroy(paperMan);
+    sfSprite_destroy(chocolate);
     sfRenderWindow_destroy(window);
 }
