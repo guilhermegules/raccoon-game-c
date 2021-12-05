@@ -155,7 +155,7 @@ int main()
     float dogPosX = 830.0f, dogPosY = generateRandomDogPosition();
     float pandaPosX = 100.0f, pandaPosY = 100.0f;
     float paperManPosX = 150.0f, paperManPosY = 150.0f;
-    float chocolatePosX = 400.0f, chocolatePosY = 400.0f;
+    float chocolatePosX = 600.0f, chocolatePosY = 500.0f;
     float crownPosX = 250.0f, crownPosY = 250.0f;
     float meteorPosX = 350.0f, meteorPosY = 350.0f;
 
@@ -202,6 +202,10 @@ int main()
         710.0f, 0.9f
     });
 
+    sfVector2f raccoonTAM;
+    raccoonTAM.x=1.5;
+    raccoonTAM.y=1.5;
+
     while(sfRenderWindow_isOpen(window))
     {
         sfEvent event;
@@ -213,7 +217,6 @@ int main()
                 sfRenderWindow_close(window);
             }
         }
-
 
         sfText_setString(text, str);
         sfTime time = sfClock_getElapsedTime(clock);
@@ -273,6 +276,7 @@ int main()
         meteor = createSprite(meteoriteSprite, "assets/meteor.png");
 
         sfSprite_scale(chocolate, (sfVector2f){0.1f, 0.1f});
+        sfSprite_scale(raccoon, (sfVector2f){raccoonTAM.x, raccoonTAM.y});
 
         sfSprite_scale(crown, (sfVector2f){0.30f, 0.30f});
 
@@ -343,6 +347,11 @@ int main()
                 str[1]=sprintf(str, "%d", --num_lives);
                 raccoonPosX = 0.0f;
                 raccoonPosY = 0.0f;
+            }
+            if(verificaColisao(raccoon, chocolate, RACCOON_WIDTH, RACCOON_HEIGHT, 512, 512))
+            {
+                raccoonTAM.x = 3.5;
+                raccoonTAM.y = 3.5;
             }
         }
         else
