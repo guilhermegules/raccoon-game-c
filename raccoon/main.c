@@ -9,55 +9,7 @@
 #include <SFML/System/Clock.h>
 #include <stdbool.h>
 
-#define RACCOON_WIDTH 48
-#define RACCOON_HEIGHT 48
-#define RACCON_SPRITES 3
-
-#define DOG_HEIGHT 48
-#define DOG_WIDTH 48
-#define DOG_SPRITES 3
-
-#define PANDA_HEIGHT 48
-#define PANDA_WIDTH 48
-#define PANDA_SPRITES 3
-
-#define PAPERMAN_HEIGHT 49.66
-#define PAPERMAN_WIDTH 44.5
-#define PAPERMAN_SPRITES 3
-
-sfIntRect racconSprites[RACCON_SPRITES] =
-{
-    {48,  96, RACCOON_WIDTH, RACCOON_HEIGHT},
-    {96,  96, RACCOON_WIDTH, RACCOON_HEIGHT},
-    {144,  96, RACCOON_WIDTH, RACCOON_HEIGHT},
-};
-
-sfIntRect dogSprites[DOG_SPRITES] =
-{
-    {48, 48, DOG_WIDTH, DOG_HEIGHT},
-    {96, 48, DOG_WIDTH, DOG_HEIGHT},
-    {144, 48, DOG_WIDTH, DOG_HEIGHT},
-};
-
-sfIntRect pandasSprites[PANDA_SPRITES] =
-{
-    {432, 240, PANDA_WIDTH, PANDA_HEIGHT},
-    {480, 240, PANDA_WIDTH, PANDA_HEIGHT},
-    {528, 240, PANDA_WIDTH, PANDA_HEIGHT},
-};
-
-sfIntRect meteoriteSprite = {0, 0, 160, 160};
-
-sfIntRect chocolateSprite = {0, 0, 512, 512};
-
-sfIntRect crownSprite = {0, 0, 800, 600};
-
-sfIntRect paperManSprites[PAPERMAN_SPRITES] =
-{
-    {44.5, 0, PAPERMAN_WIDTH, PAPERMAN_HEIGHT},
-    {89, 0, PAPERMAN_WIDTH, PAPERMAN_HEIGHT},
-    {133.5, 0, PAPERMAN_WIDTH, PAPERMAN_HEIGHT},
-};
+#include "constants.h"
 
 sfSprite* createSprite(sfIntRect spriteFrame, char* imagePath)
 {
@@ -84,7 +36,7 @@ sfSprite* gameOver()
     return draw;
 }
 
-float generateRandomDogPosition()
+float generateRandomPosition()
 {
     int lowerNumber = 100, biggerNumber = 500;
 
@@ -166,10 +118,10 @@ int main()
 
     // Sprite X|Y positions
     float raccoonPosX = 0.0f, raccoonPosY = 0.0f;
-    float dogPosX = 830.0f, dogPosY = generateRandomDogPosition();
+    float dogPosX = 830.0f, dogPosY = generateRandomPosition();
     float pandaPosX = 100.0f, pandaPosY = 100.0f;
     float paperManPosX = 150.0f, paperManPosY = 150.0f;
-    float chocolatePosX = 600.0f, chocolatePosY = 500.0f;
+    float chocolatePosX = 400.0f, chocolatePosY = generateRandomPosition();
     float crownPosX = 250.0f, crownPosY = 250.0f;
     float meteorPosX = 350.0f, meteorPosY = 350.0f;
 
@@ -283,6 +235,12 @@ int main()
             sfClock_restart(clock);
         }
 
+        if(time.microseconds >= 10000000)
+        {
+            chocolatePosX = generateRandomPosition();
+            chocolatePosY = generateRandomPosition();
+        }
+
         raccoon = createSprite(racconSprites[frameIdx], "assets/raccoon.png");
         dog     = createSprite(dogSprites[dogFrameIndex], "assets/dog.png");
         panda = createSprite(pandasSprites[frameIdx], "assets/panda.png");
@@ -291,18 +249,30 @@ int main()
         crown = createSprite(crownSprite, "assets/crown.png");
         meteor = createSprite(meteoriteSprite, "assets/meteor.png");
 
-        sfSprite_scale(chocolate, (sfVector2f){0.1f, 0.1f});
-        sfSprite_scale(raccoon, (sfVector2f){raccoonTAM.x, raccoonTAM.y});
+        sfSprite_scale(chocolate, (sfVector2f)
+        {
+            0.1f, 0.1f
+        });
+        sfSprite_scale(raccoon, (sfVector2f)
+        {
+            raccoonTAM.x, raccoonTAM.y
+        });
 
-        sfSprite_scale(crown, (sfVector2f){0.30f, 0.30f});
+        sfSprite_scale(crown, (sfVector2f)
+        {
+            0.30f, 0.30f
+        });
 
-        sfSprite_scale(meteor, (sfVector2f){0.30f, 0.30f});
+        sfSprite_scale(meteor, (sfVector2f)
+        {
+            0.30f, 0.30f
+        });
 
         sfRenderWindow_clear(window, sfWhite);
 
         if(dogPos.x < -200)
         {
-            dogPosY = generateRandomDogPosition();
+            dogPosY = generateRandomPosition();
             dogPosX = 830.0f;
         }
 
@@ -364,10 +334,17 @@ int main()
                 raccoonPosX = 0.0f;
                 raccoonPosY = 0.0f;
             }
-            if(verificaColisao(raccoon, chocolate, RACCOON_WIDTH, RACCOON_HEIGHT, 512, 512))
+
+            if(verificaColisao(raccoon, meteor, RACCOON_WIDTH, RACCOON_HEIGHT, METEOR_WIDTH, METEOR_HEIGHT))
             {
                 raccoonTAM.x = 3.5;
                 raccoonTAM.y = 3.5;
+            }
+
+            if(verificaColisao(raccoon, chocolate, RACCOON_WIDTH, RACCOON_HEIGHT, CHOCOLATE_WIDTH, CHOCOLATE_HEIGHT) && num_lives < 5)
+            {
+                sprintf(str, "%d", ++num_lives);
+                sfSprite_destroy(chocolate);
             }
         }
         else
