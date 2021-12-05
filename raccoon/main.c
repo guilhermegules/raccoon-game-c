@@ -129,17 +129,31 @@ bool verificaColisao(sfSprite * first, sfSprite * second, float FIRST_WIDTH, flo
 int main()
 {
     int num_lives = 5;
-    char str[1] = "";
+    //int points = 0;
+    char str[1];
+    //char point[4];
+
     sfFont *font = sfFont_createFromFile("arialregular.ttf");
-    str[1] = sprintf(str, "%d", num_lives);
-    sfText * text = sfText_create();
+    sfText *text = sfText_create();
+    sprintf(str, "%d", num_lives);
     sfText_setFont(text, font);
     sfText_setCharacterSize(text, 38);
     sfText_setFillColor(text, sfBlack);
     sfText_setPosition(text, (sfVector2f)
     {
-        775.0f, 0.9f
+        400.0f, 0.9f
     });
+
+    sfFont *fontPoint = sfFont_createFromFile("arialregular.ttf");
+    /*sfText *pointText = sfText_create();
+    sprintf(point, "%d", points);
+    sfText_setFont(pointText, fontPoint);
+    sfText_setCharacterSize(pointText, 38);
+    sfText_setFillColor(pointText, sfBlue);
+    sfText_setPosition(pointText, (sfVector2f)
+    {
+        400.0f, 0.9f
+    });*/
 
     srand(time(NULL));
     sfClock *clock = sfClock_create();
@@ -219,6 +233,8 @@ int main()
         }
 
         sfText_setString(text, str);
+        //sfText_setString(pointText, point);
+
         sfTime time = sfClock_getElapsedTime(clock);
 
         if(sfKeyboard_isKeyPressed(sfKeyRight))
@@ -344,7 +360,7 @@ int main()
         {
             if(verificaColisao(raccoon, dog, RACCOON_WIDTH, RACCOON_HEIGHT, DOG_WIDTH, DOG_HEIGHT))
             {
-                str[1]=sprintf(str, "%d", --num_lives);
+                sprintf(str, "%d", --num_lives);
                 raccoonPosX = 0.0f;
                 raccoonPosY = 0.0f;
             }
@@ -378,6 +394,7 @@ int main()
         }
 
         sfRenderWindow_drawText(window, text, NULL);
+        //sfRenderWindow_drawText(window, pointText, NULL);
         sfRenderWindow_display(window);
     }
 
