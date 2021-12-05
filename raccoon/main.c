@@ -21,7 +21,9 @@
 #define PANDA_WIDTH 48
 #define PANDA_SPRITES 3
 
-#define LIVES 3
+#define PAPERMAN_HEIGHT 49.66
+#define PAPERMAN_WIDTH 44.5
+#define PAPERMAN_SPRITES 3
 
 sfIntRect racconSprites[RACCON_SPRITES] =
 {
@@ -44,7 +46,18 @@ sfIntRect pandasSprites[PANDA_SPRITES] =
     {528, 240, PANDA_WIDTH, PANDA_HEIGHT},
 };
 
-// sfIntRect
+sfIntRect meteoriteSprite = {160, 160, 160, 160};
+
+sfIntRect chocolateSprite = {512, 512, 512, 512};
+
+sfIntRect crownSprite = {800, 600, 800, 600};
+
+sfIntRect paperManSprites[PAPERMAN_SPRITES] =
+{
+    {44.5, 0, PAPERMAN_WIDTH, PAPERMAN_HEIGHT},
+    {89, 0, PAPERMAN_WIDTH, PAPERMAN_HEIGHT},
+    {133.5, 0, PAPERMAN_WIDTH, PAPERMAN_HEIGHT},
+};
 
 sfSprite* createSprite(sfIntRect spriteFrame, char* imagePath)
 {
@@ -128,17 +141,23 @@ int main()
         775.0f, 0.9f
     });
 
-
     srand(time(NULL));
     sfClock *clock = sfClock_create();
     sfRenderWindow *window;
     sfVideoMode videoMode = {800, 600, 32};
     window = sfRenderWindow_create(videoMode, "Raccoon Game", sfResize | sfClose, NULL);
+
     int frameIdx = 0;
     int dogFrameIndex = 0;
-    float posX = 0.0f, posY = 0.0f;
-    float dposX = 830.0f, dposY = generateRandomDogPosition();
+
+    // Sprite X|Y positions
+    float raccoonPosX = 0.0f, raccoonPosY = 0.0f;
+    float dogPosX = 830.0f, dogPosY = generateRandomDogPosition();
     float pandaPosX = 100.0f, pandaPosY = 100.0f;
+    float paperManPosX = 150.0f, paperManPosY = 150.0f;
+    float chocolatePosX = 200.0f, chocolatePosY = 200.0f;
+    float crownPosX = 250.0f, crownPosY = 250.0f;
+    float meteorPosX = 300.0f, meteorPosY = 300.0f;
 
     // Sprites
     sfSprite *raccoon;
@@ -149,6 +168,18 @@ int main()
 
     sfSprite *panda;
     sfVector2f pandaPos;
+
+    sfSprite *meteor;
+    sfVector2f meteorPosition;
+
+    sfSprite *chocolate;
+    sfVector2f chocolatePosition;
+
+    sfSprite *crown;
+    sfVector2f crownPosition;
+
+    sfSprite *paperMan;
+    sfVector2f paperManPosition;
 
     // HEART
     sfVector2f liveTAM;
@@ -191,7 +222,7 @@ int main()
         {
             if(raccoonPos.x < 690)
             {
-                posX += 8.0;
+                raccoonPosX += 8.0;
             }
         }
 
@@ -199,7 +230,7 @@ int main()
         {
             if(raccoonPos.x != -15)
             {
-                posX -= 8.0;
+                raccoonPosX -= 8.0;
             }
         }
 
@@ -207,7 +238,7 @@ int main()
         {
             if(raccoonPos.y > -20)
             {
-                posY -= 8.0;
+                raccoonPosY -= 8.0;
             }
         }
 
@@ -215,7 +246,7 @@ int main()
         {
             if(raccoonPos.y < 530)
             {
-                posY += 8.0;
+                raccoonPosY += 8.0;
             }
         }
 
@@ -228,7 +259,7 @@ int main()
 
             if(dogFrameIndex >= 2) dogFrameIndex = 0;
 
-            dposX -= 10.0;
+            dogPosX -= 10.0;
 
             sfClock_restart(clock);
         }
@@ -236,23 +267,27 @@ int main()
         raccoon = createSprite(racconSprites[frameIdx], "assets/raccoon.png");
         dog     = createSprite(dogSprites[dogFrameIndex], "assets/dog.png");
         panda = createSprite(pandasSprites[frameIdx], "assets/panda.png");
+        paperMan = createSprite(paperManSprites[frameIdx], "assets/paperman.png");
+        chocolate = createSprite(chocolateSprite, "assets/chocolate.png");
+        crown = createSprite(crownSprite, "assets/crown.png");
+        meteor = createSprite(meteoriteSprite, "assets/meteor.png");
 
         sfRenderWindow_clear(window, sfWhite);
 
         if(dogPos.x < -200)
         {
-            dposY = generateRandomDogPosition();
-            dposX = 830.0f;
+            dogPosY = generateRandomDogPosition();
+            dogPosX = 830.0f;
         }
 
         sfSprite_setPosition(raccoon, (sfVector2f)
         {
-            posX, posY
+            raccoonPosX, raccoonPosY
         });
 
         sfSprite_setPosition(dog, (sfVector2f)
         {
-            dposX, dposY
+            dogPosX, dogPosY
         });
 
         sfSprite_setPosition(panda, (sfVector2f)
@@ -261,23 +296,59 @@ int main()
             pandaPosY
         });
 
+        sfSprite_setPosition(paperMan, (sfVector2f)
+        {
+            paperManPosX,
+            paperManPosY
+        });
+
+        sfSprite_setPosition(chocolate, (sfVector2f)
+        {
+            chocolatePosX,
+            chocolatePosY
+        });
+
+        sfSprite_setPosition(crown, (sfVector2f)
+        {
+            crownPosX,
+            crownPosY
+        });
+
+        sfSprite_setPosition(meteor, (sfVector2f)
+        {
+            meteorPosX,
+            meteorPosY
+        });
+
         sfRenderWindow_drawSprite(window, dog, NULL);
         sfRenderWindow_drawSprite(window, raccoon, NULL);
         sfRenderWindow_drawSprite(window, panda, NULL);
+        sfRenderWindow_drawSprite(window, paperMan, NULL);
+        sfRenderWindow_drawSprite(window, chocolate, NULL);
+        sfRenderWindow_drawSprite(window, crown, NULL);
+        sfRenderWindow_drawSprite(window, meteor, NULL);
         sfRenderWindow_drawSprite(window, live, NULL);
 
         /* ================================================  controle de colisões com dog x vidas ================================================ */
-        if( num_lives > 0 ) {
-            if(verificaColisao(raccoon, dog, RACCOON_WIDTH, RACCOON_HEIGHT, DOG_WIDTH, DOG_HEIGHT)) {
-                    str[1]=sprintf(str, "%d", --num_lives);
-                    posX = 0.0f; posY = 0.0f;
+        if( num_lives > 0 )
+        {
+            if(verificaColisao(raccoon, dog, RACCOON_WIDTH, RACCOON_HEIGHT, DOG_WIDTH, DOG_HEIGHT))
+            {
+                str[1]=sprintf(str, "%d", --num_lives);
+                raccoonPosX = 0.0f;
+                raccoonPosY = 0.0f;
             }
-        } else {
+        }
+        else
+        {
             sfText_setString(text, "game over");
             sfText_setPosition(text, (sfVector2f)
             {
                 280.0f, 200.0f
             });
+            sfSprite_destroy(live);
+            raccoonPosX = 0.0f;
+            raccoonPosY = 100.0f;
         }
         /* ================================================ fim controle de colisão com dog ===================================================== */
 
