@@ -26,6 +26,9 @@
 #define CROWN_WIDTH 800
 #define CROWN_HEIGHT 600
 
+#define STAR_WIDTH 578
+#define STAR_HEIGHT 578
+
 sfIntRect racconSprites[RACCON_SPRITES] =
 {
     {48,  96, RACCOON_WIDTH, RACCOON_HEIGHT},
@@ -52,6 +55,8 @@ sfIntRect meteoriteSprite = {0, 0, METEOR_WIDTH, METEOR_HEIGHT};
 sfIntRect chocolateSprite = {0, 0, CHOCOLATE_WIDTH, CHOCOLATE_HEIGHT};
 
 sfIntRect crownSprite = {0, 0, CROWN_WIDTH, CROWN_HEIGHT};
+
+sfIntRect starSprite = {0, 0, STAR_WIDTH, STAR_HEIGHT};
 
 sfIntRect paperManSprites[PAPERMAN_SPRITES] =
 {

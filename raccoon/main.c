@@ -64,11 +64,21 @@ bool colisionVerify(sfSprite * first, sfSprite * second, float FIRST_WIDTH, floa
     return false;
 }
 
+void fontConfigurationHandler(sfFont *font, sfText *text, float positionX, float positionY, int fontSize, sfColor color) {
+    sfText_setFont(text, font);
+    sfText_setCharacterSize(text, fontSize);
+    sfText_setFillColor(text, color);
+    sfText_setPosition(text, (sfVector2f)
+    {
+        positionX, positionY
+    });
+}
+
 int main()
 {
-    int num_lives = 5, improvedRaccoonTimer = 0, slowRaccoonTimer = 0;
+    int num_lives = 5, improvedRaccoonTimer = 0, slowRaccoonTimer = 0, starCount = 0;
     float points = 0, raccoonSpeed = 8.0;
-    char str[1], totalPoints[1];
+    char str[1], totalPoints[1], starCountLabel[1];
 
     bool hasPickedMeteor   = false;
     bool invertDogPosition = false;
@@ -85,11 +95,10 @@ int main()
         777.0f, 0.9f
     });
 
-    sfFont *pointFont = sfFont_createFromFile("arialregular.ttf");
     sfText *pointText = sfText_create();
     sprintf(totalPoints, "%.1f", points);
-    sfText_setFont(pointText, pointFont);
-    sfText_setCharacterSize(pointText, 38);
+    sfText_setFont(pointText, font);
+    sfText_setCharacterSize(pointText, 25);
     sfText_setFillColor(pointText, sfBlue);
     sfText_setPosition(pointText, (sfVector2f)
     {
@@ -97,16 +106,16 @@ int main()
     });
 
     sfText *faseTextLabel = sfText_create();
-
     sfText_setFont(faseTextLabel, font);
-
-    sfText_setCharacterSize(faseTextLabel, 38);
-
+    sfText_setCharacterSize(faseTextLabel, 25);
     sfText_setFillColor(faseTextLabel, sfBlue);
     sfText_setPosition(faseTextLabel, (sfVector2f)
     {
         250.0f, 0.9f
     });
+
+    sfText *knowledgeLabel = sfText_create();
+    fontConfigurationHandler(font, knowledgeLabel, 150.0f, 0.9f, 25, sfBlack);
 
     srand(time(NULL));
     sfClock *clock = sfClock_create();
@@ -125,6 +134,7 @@ int main()
     float chocolatePosX = 400.0f, chocolatePosY = generateRandomPosition();
     float crownPosX = 250.0f, crownPosY = 250.0f;
     float meteorPosX = 900.0f, meteorPosY = -100.0f;
+    float starPosX = 600.0f, starPosY = generateRandomPosition();
 
     // Sprites
     sfSprite *raccoon;
@@ -141,6 +151,9 @@ int main()
 
     sfSprite *chocolate;
     sfVector2f chocolatePosition;
+
+    sfSprite *star;
+    sfVector2f startPosition;
 
     // TODO: add crown functionality
     sfSprite *crown;
@@ -313,6 +326,7 @@ int main()
         {
             0.1f, 0.1f
         });
+
         sfSprite_scale(raccoon, (sfVector2f)
         {
             raccoonTAM.x, raccoonTAM.y
@@ -441,6 +455,11 @@ int main()
                 sprintf(str, "%d", ++num_lives);
                 sprintf(totalPoints, "Pontos: %.1f", points);
             }
+
+            if(colisionVerify(raccoon, star, RACCOON_WIDTH, RACCOON_HEIGHT, STAR_WIDTH, STAR_HEIGHT))
+            {
+                sprintf(starCountLabel, "%d", ++starCount);
+            }
         }
         else
         {
@@ -494,23 +513,59 @@ int main()
         points += 0.05;
         sprintf(totalPoints, "Pontos: %.1f", points);
 
-        if(points >= 100)
+        if(points >= 10)
         {
+            star = createSprite(starSprite, "assets/star.png");
+
+            if(time.microseconds >= 150000)
+            {
+
+                starPosX -= 10.0;
+                starPosY -= 10.0;
+
+                sfClock_restart(clock);
+            }
+
+            if(startPosition.x < -100)
+            {
+                starPosY = generateRandomPosition();
+                starPosX = 830.0f;
+            }
+
+            sfSprite_setPosition(star, (sfVector2f)
+            {
+                starPosX, starPosY
+            });
+
+            sfSprite_scale(star, (sfVector2f)
+            {
+                0.15f, 0.15f
+            });
+
             backgroundTexture = sfTexture_createFromFile("assets/fase2-background.jpeg", NULL);
             backgroundSprite = sfSprite_create();
+
+            sprintf(starCountLabel, "%d", starCount);
+
             sfSprite_setTexture(backgroundSprite, backgroundTexture, 0);
             sfRenderWindow_drawSprite(window, backgroundSprite, NULL);
             sfRenderWindow_drawSprite(window, chocolate, NULL);
+            sfRenderWindow_drawSprite(window, star, NULL);
             sfRenderWindow_drawSprite(window, meteor, NULL);
             sfRenderWindow_drawSprite(window, paperMan, NULL);
             sfRenderWindow_drawSprite(window, dog, NULL);
             sfRenderWindow_drawSprite(window, raccoon, NULL);
-            sfRenderWindow_drawSprite(window, panda, NULL);
             sfRenderWindow_drawSprite(window, live, NULL);
+
+            if(star != NULL)
+            {
+                startPosition = sfSprite_getPosition(star);
+            }
 
             sfText_setString(faseTextLabel, "Fase 2");
 
             sfRenderWindow_drawText(window, faseTextLabel, NULL);
+            sfRenderWindow_drawText(window, knowledgeLabel, NULL);
         }
 
         sfRenderWindow_drawText(window, faseTextLabel, NULL);
