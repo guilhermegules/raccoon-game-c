@@ -14,7 +14,7 @@
 sfSprite* createSprite(sfIntRect spriteFrame, char* imagePath)
 {
     sfTexture *texture = sfTexture_createFromFile(imagePath, NULL);
-    sfSprite *draw = sfSprite_create();
+    sfSprite  *draw    = sfSprite_create();
 
     sfSprite_setTexture(draw, texture, 0);
     sfSprite_setTextureRect(draw, spriteFrame);
@@ -175,14 +175,14 @@ int main()
 
     // HEART
     sfVector2f liveTAM;
-    liveTAM.x = 0.15;
-    liveTAM.y = 0.15;
+    liveTAM.x              = 0.15;
+    liveTAM.y              = 0.15;
     sfTexture *liveTexture = sfTexture_createFromFile("assets/heart.png", NULL);
-    sfSprite *live = sfSprite_create();
+    sfSprite  *live        = sfSprite_create();
     sfSprite_setTexture(live, liveTexture, 0);
     sfIntRect liveFrame;
-    liveFrame.height = 323;
-    liveFrame.width = 378;
+    liveFrame.height       = 323;
+    liveFrame.width        = 378;
     sfSprite_scale(live, liveTAM);
     sfSprite_setTextureRect(live, liveFrame);
     sfSprite_setPosition(live, (sfVector2f)
