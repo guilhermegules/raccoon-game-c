@@ -24,7 +24,7 @@ sfSprite* createSprite(sfIntRect spriteFrame, char* imagePath)
 
 float generateRandomPosition()
 {
-    int lowerNumber = 100, biggerNumber = 500;
+    int lowerNumber = 100, biggerNumber = 460;
 
     return (rand() % (biggerNumber - lowerNumber + 1)) + lowerNumber;
 }
@@ -88,7 +88,7 @@ int main()
     sfFont *pointFont = sfFont_createFromFile("arialregular.ttf");
     sfText *pointText = sfText_create();
     sprintf(totalPoints, "%.1f", points);
-    sfText_setFont(pointText , pointFont);
+    sfText_setFont(pointText, pointFont);
     sfText_setCharacterSize(pointText, 38);
     sfText_setFillColor(pointText, sfBlue);
     sfText_setPosition(pointText, (sfVector2f)
@@ -96,11 +96,22 @@ int main()
         400.0f, 0.9f
     });
 
+    sfText *faseTextLabel = sfText_create();
+
+    sfText_setFont(faseTextLabel, font);
+
+    sfText_setCharacterSize(faseTextLabel, 38);
+
+    sfText_setFillColor(faseTextLabel, sfBlue);
+    sfText_setPosition(faseTextLabel, (sfVector2f)
+    {
+        250.0f, 0.9f
+    });
 
     srand(time(NULL));
     sfClock *clock = sfClock_create();
     sfRenderWindow *window;
-    sfVideoMode videoMode = {800, 600, 32};
+    sfVideoMode videoMode = {800, 480, 32};
     window = sfRenderWindow_create(videoMode, "Raccoon Game", sfResize | sfClose, NULL);
 
     int frameIdx = 0;
@@ -163,9 +174,16 @@ int main()
     raccoonTAM.x = 1.5;
     raccoonTAM.y = 1.5;
 
+    // Background
+    sfTexture *backgroundTexture = sfTexture_createFromFile("assets/fase1-background.jpeg", NULL);
+    sfSprite *backgroundSprite = sfSprite_create();
+    sfSprite_setTexture(backgroundSprite, backgroundTexture, 0);
+
     while(sfRenderWindow_isOpen(window))
     {
         sfEvent event;
+
+        sfText_setString(faseTextLabel, "Fase 1");
 
         while(sfRenderWindow_pollEvent(window, &event))
         {
@@ -175,7 +193,8 @@ int main()
             }
         }
 
-        if(improvedRaccoonTimer >= 200){
+        if(improvedRaccoonTimer >= 200)
+        {
             raccoonTAM.x = 1.5;
             raccoonTAM.y = 1.5;
             hasPickedMeteor = false;
@@ -188,7 +207,7 @@ int main()
         {
             raccoonSpeed = 1.0;
             slowRaccoonTimer++;
-            if(slowRaccoonTimer>=100)
+            if(slowRaccoonTimer >= 200)
             {
                 slowRaccoon = false;
                 raccoonSpeed = 8.0;
@@ -330,7 +349,8 @@ int main()
             pandaPosY = -100.0f;
         }
 
-        if(chocolatePosition.y >= 600) {
+        if(chocolatePosition.y >= 600)
+        {
             chocolatePosX = generateRandomPosition();
             chocolatePosY = generateRandomPosition();
         }
@@ -369,6 +389,7 @@ int main()
             meteorPosY
         });
 
+        sfRenderWindow_drawSprite(window, backgroundSprite, NULL);
         sfRenderWindow_drawSprite(window, chocolate, NULL);
         sfRenderWindow_drawSprite(window, meteor, NULL);
         sfRenderWindow_drawSprite(window, paperMan, NULL);
@@ -376,6 +397,7 @@ int main()
         sfRenderWindow_drawSprite(window, raccoon, NULL);
         sfRenderWindow_drawSprite(window, panda, NULL);
         sfRenderWindow_drawSprite(window, live, NULL);
+
 
         /* ================================================  controle de colisões ================================================ */
         if(num_lives > 0)
@@ -399,7 +421,7 @@ int main()
             if(colisionVerify(raccoon, paperMan, RACCOON_WIDTH, RACCOON_HEIGHT, PAPERMAN_WIDTH, PAPERMAN_HEIGHT) && !hasPickedMeteor)
             {
                 sprintf(str, "%d", --num_lives);
-                sprintf(totalPoints, "%.1f", points);
+                sprintf(totalPoints, "Pontos: %.1f", points);
                 raccoonPosX = 0.0f;
                 raccoonPosY = 0.0f;
             }
@@ -407,7 +429,7 @@ int main()
             if(colisionVerify(raccoon, panda, RACCOON_WIDTH, RACCOON_HEIGHT, PANDA_WIDTH, PANDA_HEIGHT) && !hasPickedMeteor)
             {
                 sprintf(str, "%d", num_lives -= num_lives);
-                sprintf(totalPoints, "%.1f", points);
+                sprintf(totalPoints, "Pontos: %.1f", points);
                 raccoonPosX = 0.0f;
                 raccoonPosY = 0.0f;
             }
@@ -417,7 +439,7 @@ int main()
                 chocolatePosX = generateRandomPosition();
                 chocolatePosY = generateRandomPosition();
                 sprintf(str, "%d", ++num_lives);
-                sprintf(totalPoints, "%.1f", points);
+                sprintf(totalPoints, "Pontos: %.1f", points);
             }
         }
         else
@@ -462,15 +484,36 @@ int main()
             pandaPos = sfSprite_getPosition(panda);
         }
 
-        if(chocolate != NULL) {
+        if(chocolate != NULL)
+        {
             chocolatePosition = sfSprite_getPosition(chocolate);
         }
 
         if(hasPickedMeteor) improvedRaccoonTimer++;
 
-        points+=0.05;
-        sprintf(totalPoints, "%.1f", points);
+        points += 0.05;
+        sprintf(totalPoints, "Pontos: %.1f", points);
 
+        if(points >= 100)
+        {
+            backgroundTexture = sfTexture_createFromFile("assets/fase2-background.jpeg", NULL);
+            backgroundSprite = sfSprite_create();
+            sfSprite_setTexture(backgroundSprite, backgroundTexture, 0);
+            sfRenderWindow_drawSprite(window, backgroundSprite, NULL);
+            sfRenderWindow_drawSprite(window, chocolate, NULL);
+            sfRenderWindow_drawSprite(window, meteor, NULL);
+            sfRenderWindow_drawSprite(window, paperMan, NULL);
+            sfRenderWindow_drawSprite(window, dog, NULL);
+            sfRenderWindow_drawSprite(window, raccoon, NULL);
+            sfRenderWindow_drawSprite(window, panda, NULL);
+            sfRenderWindow_drawSprite(window, live, NULL);
+
+            sfText_setString(faseTextLabel, "Fase 2");
+
+            sfRenderWindow_drawText(window, faseTextLabel, NULL);
+        }
+
+        sfRenderWindow_drawText(window, faseTextLabel, NULL);
         sfRenderWindow_drawText(window, text, NULL);
         sfRenderWindow_drawText(window, pointText, NULL);
         sfRenderWindow_display(window);
