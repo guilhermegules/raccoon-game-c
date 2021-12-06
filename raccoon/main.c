@@ -216,30 +216,30 @@ int main()
 
         if(improvedRaccoonTimer >= 200)
         {
-            raccoonTAM.x = 1.5;
-            raccoonTAM.y = 1.5;
-            hasPickedMeteor = false;
-            slowRaccoon = true;
-            slowRaccoonTimer = 0;
-            improvedRaccoonTimer=0;
+            raccoonTAM.x         = 1.5;
+            raccoonTAM.y         = 1.5;
+            hasPickedMeteor      = false;
+            slowRaccoon          = true;
+            slowRaccoonTimer     = 0;
+            improvedRaccoonTimer = 0;
         }
 
         if(slowRaccoon && !hasPickedMeteor)
         {
-            raccoonSpeed = 1.0;
+            raccoonSpeed         = 1.0;
             slowRaccoonTimer++;
             if(slowRaccoonTimer >= 200)
             {
-                slowRaccoon = false;
-                raccoonSpeed = 8.0;
+                slowRaccoon      = false;
+                raccoonSpeed     = 8.0;
             }
         }
 
-        sfText_setString(text, str);
-        sfText_setString(pointText, totalPoints);
-        sprintf(totalChocolates, "%d", chocolates);
+        sfText_setString(text,      str            );
+        sfText_setString(pointText, totalPoints    );
         sfText_setString(chocoText, totalChocolates);
 
+        sprintf(totalChocolates, "%d", chocolates);
         sfTime time = sfClock_getElapsedTime(clock);
 
         if(sfKeyboard_isKeyPressed(sfKeyRight))
@@ -283,9 +283,8 @@ int main()
 
             if(dogFrameIndex >= 2) dogFrameIndex = 0;
 
-            paperManPosX -= 10.0;
-
-            dogPosX -= 10.0;
+            paperManPosX  -= 10.0;
+            dogPosX       -= 10.0;
 
             if(dogPos.y <= 0)
             {
@@ -299,20 +298,20 @@ int main()
 
             if(!invertDogPosition && dogPos.y >= 0)
             {
-                dogPosY -= 10.0;
+                dogPosY   -= 10.0;
             }
 
 
             if(invertDogPosition && dogPos.y <= 545)
             {
-                dogPosY += 10.0f;
+                dogPosY   += 10.0f;
             }
 
-            meteorPosY += 10.0;
-            meteorPosX -= 10.0;
+            meteorPosY    += 10.0;
+            meteorPosX    -= 10.0;
 
-            pandaPosX -= 10.0;
-            pandaPosY += 3.0;
+            pandaPosX     -= 10.0;
+            pandaPosY     += 3.0;
 
             chocolatePosY += 10.0;
 
@@ -361,26 +360,26 @@ int main()
 
         if(dogPos.x < -200)
         {
-            dogPosY = generateRandomPosition();
-            dogPosX = 830.0f;
+            dogPosY       = generateRandomPosition();
+            dogPosX       = 830.0f;
         }
 
         if(paperManPosition.x < -200)
         {
-            paperManPosY = generateRandomPosition();
-            paperManPosX = 830.0f;
+            paperManPosY  = generateRandomPosition();
+            paperManPosX  = 830.0f;
         }
 
         if(meteorPosition.x < -200)
         {
-            meteorPosX = generateRandomPosition();
-            meteorPosY = -100.0f;
+            meteorPosX    = generateRandomPosition();
+            meteorPosY    = -100.0f;
         }
 
         if(pandaPos.x < -200)
         {
-            pandaPosX = generateRandomPosition();
-            pandaPosY = -100.0f;
+            pandaPosX     = generateRandomPosition();
+            pandaPosY     = -100.0f;
         }
 
         if(chocolatePosition.y >= 600)
@@ -449,11 +448,11 @@ int main()
 
             if(colisionVerify(raccoon, meteor, RACCOON_WIDTH, RACCOON_HEIGHT, METEOR_WIDTH, METEOR_HEIGHT))
             {
-                improvedRaccoonTimer = 0;
-                raccoonTAM.x = 3.5;
-                raccoonTAM.y = 3.5;
+                improvedRaccoonTimer         = 0;
+                raccoonTAM.x                 = 3.5;
+                raccoonTAM.y                 = 3.5;
                 if(slowRaccoon) raccoonSpeed = 8.0;
-                hasPickedMeteor = true;
+                hasPickedMeteor              = true;
             }
 
             if(colisionVerify(raccoon, paperMan, RACCOON_WIDTH, RACCOON_HEIGHT, PAPERMAN_WIDTH, PAPERMAN_HEIGHT) && !hasPickedMeteor)
