@@ -179,6 +179,7 @@ int main()
         if(acumulador >= 100){
             raccoonTAM.x = 1.5;
             raccoonTAM.y = 1.5;
+            hasPickedMeteor = false;
         }
 
         sfText_setString(text, str);
@@ -267,15 +268,6 @@ int main()
         {
             chocolatePosX = generateRandomPosition();
             chocolatePosY = generateRandomPosition();
-        }
-
-        // TODO: validate raccoon size
-        if(time.microseconds >= 1000000 && hasPickedMeteor)
-        {
-            printf("meteor effect ended");
-            raccoonTAM.x = 1.5;
-            raccoonTAM.y = 1.5;
-            hasPickedMeteor = false;
         }
 
         raccoon = createSprite(racconSprites[frameIdx], "assets/raccoon.png");
@@ -461,7 +453,6 @@ int main()
         if(chocolate != NULL) {
             chocolatePosition = sfSprite_getPosition(chocolate);
         }
-
 
         if(hasPickedMeteor) acumulador++;
         points+=0.05;
