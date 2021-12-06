@@ -175,7 +175,7 @@ int main()
             }
         }
 
-        if(improvedRaccoonTimer >= 100){
+        if(improvedRaccoonTimer >= 200){
             raccoonTAM.x = 1.5;
             raccoonTAM.y = 1.5;
             hasPickedMeteor = false;
@@ -380,7 +380,7 @@ int main()
         /* ================================================  controle de colisões ================================================ */
         if(num_lives > 0)
         {
-            if(colisionVerify(raccoon, dog, RACCOON_WIDTH, RACCOON_HEIGHT, DOG_WIDTH, DOG_HEIGHT))
+            if(colisionVerify(raccoon, dog, RACCOON_WIDTH, RACCOON_HEIGHT, DOG_WIDTH, DOG_HEIGHT) && !hasPickedMeteor)
             {
                 sprintf(str, "%d", num_lives -= 2);
                 sprintf(totalPoints, "%.1f", points);
@@ -396,7 +396,7 @@ int main()
                 hasPickedMeteor = true;
             }
 
-            if(colisionVerify(raccoon, paperMan, RACCOON_WIDTH, RACCOON_HEIGHT, PAPERMAN_WIDTH, PAPERMAN_HEIGHT))
+            if(colisionVerify(raccoon, paperMan, RACCOON_WIDTH, RACCOON_HEIGHT, PAPERMAN_WIDTH, PAPERMAN_HEIGHT) && !hasPickedMeteor)
             {
                 sprintf(str, "%d", --num_lives);
                 sprintf(totalPoints, "%.1f", points);
@@ -404,7 +404,7 @@ int main()
                 raccoonPosY = 0.0f;
             }
 
-            if(colisionVerify(raccoon, panda, RACCOON_WIDTH, RACCOON_HEIGHT, PANDA_WIDTH, PANDA_HEIGHT))
+            if(colisionVerify(raccoon, panda, RACCOON_WIDTH, RACCOON_HEIGHT, PANDA_WIDTH, PANDA_HEIGHT) && !hasPickedMeteor)
             {
                 sprintf(str, "%d", num_lives -= num_lives);
                 sprintf(totalPoints, "%.1f", points);
@@ -414,7 +414,6 @@ int main()
 
             if(colisionVerify(raccoon, chocolate, RACCOON_WIDTH, RACCOON_HEIGHT, CHOCOLATE_WIDTH, CHOCOLATE_HEIGHT) && num_lives < 5)
             {
-                // TODO: validate why chocolate sprite isn't destroyed
                 chocolatePosX = generateRandomPosition();
                 chocolatePosY = generateRandomPosition();
                 sprintf(str, "%d", ++num_lives);
