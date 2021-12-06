@@ -67,9 +67,10 @@ bool colisionVerify(sfSprite * first, sfSprite * second, float FIRST_WIDTH, floa
 int main()
 {
     int num_lives = 5;
-    //int points = 0;
+    int acumulador = 0;
+    float points = 0;
     char str[1];
-    //char point[4];
+    char totalPoints[1];
 
     bool hasPickedMeteor = false;
     bool invertDogPosition = false;
@@ -82,19 +83,20 @@ int main()
     sfText_setFillColor(text, sfBlack);
     sfText_setPosition(text, (sfVector2f)
     {
-        400.0f, 0.9f
+        777.0f, 0.9f
     });
 
-    sfFont *fontPoint = sfFont_createFromFile("arialregular.ttf");
-    /*sfText *pointText = sfText_create();
-    sprintf(point, "%d", points);
-    sfText_setFont(pointText, fontPoint);
+    sfFont *pointFont = sfFont_createFromFile("arialregular.ttf");
+    sfText *pointText = sfText_create();
+    sprintf(totalPoints, "%.1f", points);
+    sfText_setFont(pointText , pointFont);
     sfText_setCharacterSize(pointText, 38);
     sfText_setFillColor(pointText, sfBlue);
     sfText_setPosition(pointText, (sfVector2f)
     {
         400.0f, 0.9f
-    });*/
+    });
+
 
     srand(time(NULL));
     sfClock *clock = sfClock_create();
@@ -174,8 +176,13 @@ int main()
             }
         }
 
+        if(acumulador >= 100){
+            raccoonTAM.x = 1.5;
+            raccoonTAM.y = 1.5;
+        }
+
         sfText_setString(text, str);
-        //sfText_setString(pointText, point);
+        sfText_setString(pointText, totalPoints);
 
         sfTime time = sfClock_getElapsedTime(clock);
 
@@ -371,12 +378,14 @@ int main()
             if(colisionVerify(raccoon, dog, RACCOON_WIDTH, RACCOON_HEIGHT, DOG_WIDTH, DOG_HEIGHT))
             {
                 sprintf(str, "%d", num_lives -= 2);
+                sprintf(totalPoints, "%.1f", points);
                 raccoonPosX = 0.0f;
                 raccoonPosY = 0.0f;
             }
 
             if(colisionVerify(raccoon, meteor, RACCOON_WIDTH, RACCOON_HEIGHT, METEOR_WIDTH, METEOR_HEIGHT))
             {
+                acumulador = 0;
                 raccoonTAM.x = 3.5;
                 raccoonTAM.y = 3.5;
                 hasPickedMeteor = true;
@@ -385,6 +394,7 @@ int main()
             if(colisionVerify(raccoon, paperMan, RACCOON_WIDTH, RACCOON_HEIGHT, PAPERMAN_WIDTH, PAPERMAN_HEIGHT))
             {
                 sprintf(str, "%d", --num_lives);
+                sprintf(totalPoints, "%.1f", points);
                 raccoonPosX = 0.0f;
                 raccoonPosY = 0.0f;
             }
@@ -392,6 +402,7 @@ int main()
             if(colisionVerify(raccoon, panda, RACCOON_WIDTH, RACCOON_HEIGHT, PANDA_WIDTH, PANDA_HEIGHT))
             {
                 sprintf(str, "%d", num_lives -= num_lives);
+                sprintf(totalPoints, "%.1f", points);
                 raccoonPosX = 0.0f;
                 raccoonPosY = 0.0f;
             }
@@ -399,8 +410,10 @@ int main()
             if(colisionVerify(raccoon, chocolate, RACCOON_WIDTH, RACCOON_HEIGHT, CHOCOLATE_WIDTH, CHOCOLATE_HEIGHT) && num_lives < 5)
             {
                 // TODO: validate why chocolate sprite isn't destroyed
+                chocolatePosX = generateRandomPosition();
+                chocolatePosY = generateRandomPosition();
                 sprintf(str, "%d", ++num_lives);
-                sfSprite_destroy(chocolate);
+                sprintf(totalPoints, "%.1f", points);
             }
         }
         else
@@ -449,8 +462,13 @@ int main()
             chocolatePosition = sfSprite_getPosition(chocolate);
         }
 
+
+        if(hasPickedMeteor) acumulador++;
+        points+=0.05;
+        sprintf(totalPoints, "%.1f", points);
+
         sfRenderWindow_drawText(window, text, NULL);
-        //sfRenderWindow_drawText(window, pointText, NULL);
+        sfRenderWindow_drawText(window, pointText, NULL);
         sfRenderWindow_display(window);
     }
 
