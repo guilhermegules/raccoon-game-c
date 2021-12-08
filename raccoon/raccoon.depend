@@ -1,0 +1,29 @@
+# depslib dependency file v1.0
+1638824410 source:/home/vitorsaldanha/Documentos/projetos/raccoon-game-c/raccoon/main.c
+	<stdlib.h>
+	<stdio.h>
+	<time.h>
+	<SFML/Audio.h>
+	<SFML/Graphics.h>
+	<SFML/Graphics/Export.h>
+	<SFML/Window.h>
+	<SFML/System/Clock.h>
+	<stdbool.h>
+	"constants.h"
+
+1638756579 source:/home/guilhermegules/workspaces/dev/raccoon-game-c/raccoon/main.c
+	<stdlib.h>
+	<stdio.h>
+	<time.h>
+	<SFML/Audio.h>
+	<SFML/Graphics.h>
+	<SFML/Graphics/Export.h>
+	<SFML/Window.h>
+	<SFML/System/Clock.h>
+	<stdbool.h>
+	"constants.h"
+
+1638756530 /home/guilhermegules/workspaces/dev/raccoon-game-c/raccoon/constants.h
+
+1638762641 /home/vitorsaldanha/Documentos/projetos/raccoon-game-c/raccoon/constants.h
+
